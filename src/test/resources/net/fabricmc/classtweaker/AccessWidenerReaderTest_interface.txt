@@ -1,0 +1,3 @@
+classTweaker	v1	somenamespace
+inject-interface	test/FinalClass	test/InterfaceTests
+transitive-inject-interface	test/FinalClass	test/InterfaceTests

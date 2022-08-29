@@ -1,0 +1,5 @@
+classTweaker	v1	somenamespace
+extend-enum test/ParamEnum Z (Ljava/lang/String;ILjava/lang/String;I)V
+    params net/fabricmc/classtweaker/EnumTestConstants ENUM_PARAMS   Ljava/util/List;
+extend-enum test/ParamEnum X (Ljava/lang/String;ILjava/lang/String;I)V
+    params "z" 1000

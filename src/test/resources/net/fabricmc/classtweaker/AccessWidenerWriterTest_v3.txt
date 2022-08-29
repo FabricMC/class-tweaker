@@ -1,0 +1,24 @@
+classTweaker	v1	somenamespace
+accessible	class	pkg/AccessibleClass
+extendable	class	pkg/ExtendableClass
+accessible	class	pkg/AccessibleExtendableClass
+extendable	class	pkg/AccessibleExtendableClass
+accessible	method	pkg/AccessibleClass	method	()V
+extendable	method	pkg/ExtendableClass	method	()V
+accessible	method	pkg/AccessibleExtendableClass	method	()V
+extendable	method	pkg/AccessibleExtendableClass	method	()V
+accessible	field	pkg/AccessibleClass	field	I
+mutable	field	pkg/AccessibleClass	finalField	I
+transitive-accessible	class	pkg/TransitiveAccessibleClass
+transitive-accessible	method	pkg/TransitiveAccessibleClass	method	()V
+transitive-accessible	field	pkg/TransitiveAccessibleClass	field	I
+extend-enum	test/SimpleEnum	THREE	(Ljava/lang/String;I)V
+extend-enum	test/ParamEnum	Z	(Ljava/lang/String;ILjava/lang/String;I)V
+	params	net/fabricmc/classtweaker/EnumTestConstants	ENUM_PARAMS	Ljava/util/List;
+transitive-extend-enum	test/ParamEnum	X	(Ljava/lang/String;ILjava/lang/String;I)V
+	params	"z"	1000
+extend-enum	test/ComplexEnum	ADDED	(Ljava/lang/String;ILjava/lang/String;)V
+	override	hello	net/fabricmc/classtweaker/EnumTestConstants	hello	(I)Z
+	params	"Hello world!"
+inject-interface	test/FinalClass	test/InterfaceTests
+transitive-inject-interface	test/FinalClass	test/InterfaceTests
