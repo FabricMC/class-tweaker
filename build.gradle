@@ -72,13 +72,13 @@ if (javaVersion.isCompatibleWith(JavaVersion.VERSION_20)) {
 }
 
 dependencies {
-	def asmVersion = "9.3"
+	def asmVersion = "9.4"
 	def junitVersion = "5.8.2"
 	def assertJVersion = "3.22.0"
 
-	if (javaVersion.isCompatibleWith(JavaVersion.VERSION_20)) {
-		asmVersion = "9.4-SNAPSHOT"
-	}
+//	if (javaVersion.isCompatibleWith(JavaVersion.VERSION_20)) {
+//		asmVersion = "9.4-SNAPSHOT"
+//	}
 
 	api "org.ow2.asm:asm:$asmVersion"
 	api "org.ow2.asm:asm-commons:$asmVersion" // For Remapper
