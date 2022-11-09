@@ -23,12 +23,22 @@ import java.util.function.BiConsumer;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 
-public interface ClassTweaker {
+import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
+import net.fabricmc.classtweaker.impl.ClassTweakerImpl;
+
+public interface ClassTweaker extends ClassTweakerVisitor {
 	// Access widener format versions
 	int AW_V1 = 1;
 	int AW_V2 = 2;
 	// Class tweaker format versions.
 	int CT_V1 = 3;
+
+	/**
+	 * @return a new {@link ClassTweaker} instance.
+	 */
+	static ClassTweaker newInstance() {
+		return new ClassTweakerImpl();
+	}
 
 	/**
 	 * The mapping namespace of the current class tweaker.
