@@ -123,7 +123,7 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 					if (trimmed.startsWith("params")) {
 						readEnumParams(trimmed, enumExtensionVisitor, enumConstructor);
 					} else if (trimmed.startsWith("override")) {
-						readEnumOverrides(line, enumExtensionVisitor);
+						readEnumOverrides(trimmed, enumExtensionVisitor);
 					} else {
 						throw error("Expect params or override", line);
 					}
