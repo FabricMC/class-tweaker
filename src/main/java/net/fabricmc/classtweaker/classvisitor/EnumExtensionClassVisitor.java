@@ -16,6 +16,7 @@
 
 package net.fabricmc.classtweaker.classvisitor;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.AnnotationVisitor;
@@ -339,6 +341,15 @@ public final class EnumExtensionClassVisitor extends ClassVisitor {
 
 				if (constructor.getArgumentTypes().length > 2) {
 					final EnumExtension.Parameters parameters = entry.getParameters();
+
+					if (parameters == null) {
+						String requiredParams = Arrays.stream(constructor.getArgumentTypes())
+								.skip(2)
+								.map(Type::getInternalName)
+								.collect(Collectors.joining(","));
+
+						throw error("No parameters provided for enum constructor, expected: [%s]", requiredParams);
+					}
 
 					if (parameters instanceof EnumExtension.ListParameters) {
 						visitListParameters(generator, constructor, (EnumExtension.ListParameters) parameters);
