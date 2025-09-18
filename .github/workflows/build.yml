@@ -5,7 +5,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        java: [17, 21]
     runs-on: ubuntu-22.04
     container:
       image: openjdk:${{ matrix.java }}-jdk
@@ -15,8 +15,6 @@ jobs:
       - uses: actions/setup-java@v3 # Install java to run gradle with
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: ${{ matrix.java }}
       - name: Build and Test
         run: ./gradlew build --stacktrace
-        env:
-          JDK_VERSION: ${{ matrix.java }}
