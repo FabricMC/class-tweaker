@@ -103,7 +103,7 @@ class ClassTweakerWriterTest {
 		ClassTweakerWriter writer = ClassTweakerWriter.create(ClassTweaker.AW_V2);
 		writer.visitHeader("ns1");
 		Exception e = assertThrows(Exception.class, () -> writer.visitInjectedInterface("test/FinalClass", "test/InterfaceTests", false));
-		assertThat(e).hasMessageContaining("Cannot write enum extension rule in version 2");
+		assertThat(e).hasMessageContaining("Cannot write interface injection rule in version 2");
 	}
 
 	private String readReferenceContent(String name) throws IOException, URISyntaxException {

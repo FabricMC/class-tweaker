@@ -85,6 +85,10 @@ public final class ClassTweakerWriterImpl implements ClassTweakerVisitor, ClassT
 
 	@Override
 	public void visitInjectedInterface(String owner, String iface, boolean transitive) {
+		if (version < 3) {
+			throw new IllegalArgumentException("Cannot write interface injection rule in version " + version);
+		}
+
 		if (transitive) {
 			builder.append("transitive-");
 		}
