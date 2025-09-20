@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 /**
  * Decorates a visitor to only receive elements that are marked as transitive.
@@ -64,15 +63,6 @@ public final class TransitiveOnlyFilter implements ClassTweakerVisitor {
 					}
 				}
 			};
-		}
-
-		return null;
-	}
-
-	@Override
-	public EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		if (transitive) {
-			return delegate.visitEnum(owner, name, constructorDesc, id, transitive);
 		}
 
 		return null;

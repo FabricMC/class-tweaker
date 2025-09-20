@@ -20,10 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
-import net.fabricmc.tinyremapper.api.TrClass;
 import net.fabricmc.tinyremapper.api.TrEnvironment;
-import net.fabricmc.tinyremapper.api.TrMethod;
 
 public class ClassTweakerValidatingVisitor implements ClassTweakerVisitor {
 	private final TrEnvironment environment;
@@ -35,23 +32,6 @@ public class ClassTweakerValidatingVisitor implements ClassTweakerVisitor {
 	@Override
 	public @Nullable AccessWidenerVisitor visitAccessWidener(String owner) {
 		return new AccessWidenerValidatingVisitor(environment, owner);
-	}
-
-	@Override
-	public @Nullable EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		final TrClass trClass = environment.getClass(owner);
-
-		if (trClass == null) {
-			throw new ClassTweakerValidationException("Could not find target class (%s)", owner);
-		}
-
-		final TrMethod trConstructor = trClass.getMethod("<init>", constructorDesc);
-
-		if (trConstructor == null) {
-			throw new ClassTweakerValidationException("Could not find target constructor (<init>%s) in class (%s)", constructorDesc, owner);
-		}
-
-		return new EnumExtensionValidatingVisitor(environment, owner, name, constructorDesc);
 	}
 
 	@Override

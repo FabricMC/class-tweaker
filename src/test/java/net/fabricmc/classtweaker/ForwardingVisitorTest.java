@@ -24,7 +24,6 @@ import net.fabricmc.classtweaker.api.ClassTweaker;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 class ForwardingVisitorTest {
 	ClassTweakerWriter writer1 = ClassTweakerWriter.create(ClassTweaker.CT_V1);
@@ -62,50 +61,6 @@ class ForwardingVisitorTest {
 		visitor.visitAccessWidener("class-name").visitField("field-name", "field-desc", AccessWidenerVisitor.AccessType.ACCESSIBLE, true);
 		assertEquals("classTweaker\tv1\tspecial-namespace\n"
 				+ "transitive-accessible\tfield\tclass-name\tfield-name\tfield-desc\n", writer1.writeString());
-		assertEquals(writer1.writeString(), writer2.writeString());
-	}
-
-	@Test
-	void visitEnum() {
-		visitor.visitHeader("special-namespace");
-		visitor.visitEnum("test/ParamEnum", "Z", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", false);
-		assertEquals("classTweaker\tv1\tspecial-namespace\n"
-								+ "extend-enum\ttest/ParamEnum\tZ\t(Ljava/lang/String;ILjava/lang/String;I)V\n", writer1.writeString());
-		assertEquals(writer1.writeString(), writer2.writeString());
-	}
-
-	@Test
-	void visitEnumParameterList() {
-		visitor.visitHeader("special-namespace");
-		EnumExtensionVisitor enumExtensionVisitor = visitor.visitEnum("test/ParamEnum", "Z", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", false);
-		enumExtensionVisitor.visitParameterList("net/fabricmc/classtweaker/EnumTestConstants", "ENUM_PARAMS", "Ljava/util/List;");
-		assertEquals("classTweaker\tv1\tspecial-namespace\n"
-								+ "extend-enum\ttest/ParamEnum\tZ\t(Ljava/lang/String;ILjava/lang/String;I)V\n"
-								+ "\tparams\tnet/fabricmc/classtweaker/EnumTestConstants\tENUM_PARAMS\tLjava/util/List;\n", writer1.writeString());
-		assertEquals(writer1.writeString(), writer2.writeString());
-	}
-
-	@Test
-	void visitEnumConstants() {
-		visitor.visitHeader("special-namespace");
-		EnumExtensionVisitor enumExtensionVisitor = visitor.visitEnum("test/ParamEnum", "Z", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", false);
-		enumExtensionVisitor.visitParameterConstants(new Object[]{true, 'h', (byte) 123, (short) 4567, 1234567, 12.0F, 9999L, 1.12D, "Hello World", null});
-		assertEquals("classTweaker\tv1\tspecial-namespace\n"
-								+ "extend-enum\ttest/ParamEnum\tZ\t(Ljava/lang/String;ILjava/lang/String;I)V\n"
-								+ "\tparams\ttrue\th\t123\t4567\t1234567\t12.0\t9999\t1.12\t\"Hello World\"\tnull\n", writer1.writeString());
-		assertEquals(writer1.writeString(), writer2.writeString());
-	}
-
-	@Test
-	void visitEnumOverride() {
-		visitor.visitHeader("special-namespace");
-		EnumExtensionVisitor enumExtensionVisitor = visitor.visitEnum("test/ParamEnum", "Z", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", false);
-		enumExtensionVisitor.visitOverride("hello", "net/fabricmc/classtweaker/EnumTestConstants", "hello", "(I)Z");
-		enumExtensionVisitor.visitParameterConstants(new Object[]{"Hello world!"});
-		assertEquals("classTweaker\tv1\tspecial-namespace\n"
-								+ "extend-enum\ttest/ParamEnum\tZ\t(Ljava/lang/String;ILjava/lang/String;I)V\n"
-								+ "\toverride\thello\tnet/fabricmc/classtweaker/EnumTestConstants\thello\t(I)Z\n"
-								+ "\tparams\t\"Hello world!\"\n", writer1.writeString());
 		assertEquals(writer1.writeString(), writer2.writeString());
 	}
 

@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 /**
  * Forwards visitor events to multiple other visitors.
@@ -51,17 +50,6 @@ public class ForwardingVisitor implements ClassTweakerVisitor {
 		}
 
 		return new ForwardingAccessWidenerVisitor(accessWidenerVisitors.toArray(new AccessWidenerVisitor[0]));
-	}
-
-	@Override
-	public EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		List<EnumExtensionVisitor> enumExtensionVisitors = new ArrayList<>(visitors.length);
-
-		for (ClassTweakerVisitor visitor : visitors) {
-			enumExtensionVisitors.add(visitor.visitEnum(owner, name, constructorDesc, id, transitive));
-		}
-
-		return new ForwardingEnumExtensionVisitor(enumExtensionVisitors.toArray(new EnumExtensionVisitor[0]));
 	}
 
 	@Override
@@ -96,42 +84,6 @@ public class ForwardingVisitor implements ClassTweakerVisitor {
 		public void visitField(String name, String descriptor, AccessType access, boolean transitive) {
 			for (AccessWidenerVisitor visitor : visitors) {
 				visitor.visitField(name, descriptor, access, transitive);
-			}
-		}
-	}
-
-	private static class ForwardingEnumExtensionVisitor implements EnumExtensionVisitor {
-		private final EnumExtensionVisitor[] visitors;
-
-		private ForwardingEnumExtensionVisitor(EnumExtensionVisitor[] visitors) {
-			this.visitors = visitors.clone();
-		}
-
-		@Override
-		public void visitParameterList(String owner, String name, String desc) {
-			for (EnumExtensionVisitor visitor : visitors) {
-				visitor.visitParameterList(owner, name, desc);
-			}
-		}
-
-		@Override
-		public void visitParameterConstants(Object[] constants) {
-			for (EnumExtensionVisitor visitor : visitors) {
-				visitor.visitParameterConstants(constants);
-			}
-		}
-
-		@Override
-		public void visitOverride(String methodName, String owner, String name, String desc) {
-			for (EnumExtensionVisitor visitor : visitors) {
-				visitor.visitOverride(methodName, owner, name, desc);
-			}
-		}
-
-		@Override
-		public void visitEnd() {
-			for (EnumExtensionVisitor visitor : visitors) {
-				visitor.visitEnd();
 			}
 		}
 	}

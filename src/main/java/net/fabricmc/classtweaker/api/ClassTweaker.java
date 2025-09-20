@@ -64,10 +64,6 @@ public interface ClassTweaker extends ClassTweakerVisitor {
 
 	Map<String, AccessWidener> getAllAccessWideners();
 
-	Map<String, EnumExtension> getEnumExtensions(String className);
-
-	Map<String, Map<String, EnumExtension>> getAllEnumExtensions();
-
 	Set<InjectedInterface> getInjectedInterfaces(String className);
 
 	Map<String, Set<InjectedInterface>> getAllInjectedInterfaces();

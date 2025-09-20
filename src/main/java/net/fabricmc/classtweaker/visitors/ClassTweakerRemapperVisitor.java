@@ -21,7 +21,6 @@ import org.objectweb.asm.commons.Remapper;
 
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 /**
  * Decorates a {@link ClassTweakerVisitor} with a {@link Remapper}
@@ -71,17 +70,6 @@ public final class ClassTweakerRemapperVisitor implements ClassTweakerVisitor {
 		}
 
 		return new AccessWidenerRemapperVisitor(delegateAccessWidenerVisitor, remapper, owner);
-	}
-
-	@Override
-	public EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		final EnumExtensionVisitor delegateEnumExtensionVisitor = delegate.visitEnum(remapper.map(owner), name, remapper.mapMethodDesc(constructorDesc), id, transitive);
-
-		if (delegateEnumExtensionVisitor == null) {
-			return null;
-		}
-
-		return new EnumExtensionRemapperVisitor(delegateEnumExtensionVisitor, remapper, owner);
 	}
 
 	@Override

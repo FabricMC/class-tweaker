@@ -43,20 +43,6 @@ public interface ClassTweakerVisitor {
 	}
 
 	/**
-	 * Visit an extended enum.
-	 *
-	 * @param owner the name of the containing enum class
-	 * @param name the name of the enum value
-	 * @param constructorDesc The enum constructor desc
-	 * @param id A unique id
-	 * @param transitive whether this widener should be applied across mod boundaries
-	 */
-	@Nullable
-	default EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		return null;
-	}
-
-	/**
 	 * Visit an injected interface.
 	 *
 	 * @param owner the class name of the class to inject the interface onto

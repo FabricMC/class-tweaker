@@ -541,14 +541,6 @@ public class ClassTweakerReaderTest {
 	@Nested
 	class V3Parsing {
 		@Test
-		void readEnum() throws Exception {
-			String testInput = readTestInput("AccessWidenerReaderTest_enum.txt");
-			parse(testInput);
-
-			assertThat(visitor.getTargets()).hasSize(1);
-		}
-
-		@Test
 		void readInjectedInterface() throws Exception {
 			String testInput = readTestInput("AccessWidenerReaderTest_interface.txt");
 			parse(testInput);

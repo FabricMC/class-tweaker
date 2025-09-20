@@ -19,7 +19,6 @@ package net.fabricmc.classtweaker.writer;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 public final class ClassTweakerWriterImpl implements ClassTweakerVisitor, ClassTweakerWriter {
 	private final StringBuilder builder = new StringBuilder();
@@ -80,55 +79,6 @@ public final class ClassTweakerWriterImpl implements ClassTweakerVisitor, ClassT
 				writeAccess(access, transitive);
 				builder.append("\tfield\t").append(owner).append('\t').append(name)
 						.append('\t').append(descriptor).append('\n');
-			}
-		};
-	}
-
-	@Override
-	public EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		if (version < 3) {
-			throw new IllegalStateException("Cannot write enum extension rule in version " + version);
-		}
-
-		if (transitive) {
-			builder.append("transitive-");
-		}
-
-		builder.append("extend-enum\t").append(owner).append("\t").append(name).append("\t").append(constructorDesc).append('\n');
-
-		return new EnumExtensionVisitor() {
-			@Override
-			public void visitParameterList(String owner, String name, String desc) {
-				builder.append("\tparams\t")
-					.append(owner)
-					.append("\t").append(name)
-					.append("\t").append(desc).append('\n');
-			}
-
-			@Override
-			public void visitParameterConstants(Object[] constants) {
-				builder.append("\tparams");
-
-				for (Object constant : constants) {
-					builder.append("\t");
-
-					if (constant instanceof String) {
-						builder.append('"').append(constant).append('"');
-					} else {
-						builder.append(constant);
-					}
-				}
-
-				builder.append("\n");
-			}
-
-			@Override
-			public void visitOverride(String methodName, String owner, String name, String desc) {
-				builder.append("\toverride\t")
-					.append(methodName).append("\t")
-					.append(owner).append("\t")
-					.append(name).append("\t")
-					.append(desc).append('\n');
 			}
 		};
 	}
