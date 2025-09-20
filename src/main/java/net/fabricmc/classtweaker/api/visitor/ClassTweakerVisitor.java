@@ -46,7 +46,10 @@ public interface ClassTweakerVisitor {
 	 * Visit an injected interface.
 	 *
 	 * @param owner the class name of the class to inject the interface onto
-	 * @param iface the class name of the interface to inject onto the target class.
+	 * @param iface the class name of the interface to inject onto the target class, plus any generics. If generics are
+	 *              present, then this follows the format of
+	 *              <a href="https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassTypeSignature">JVMS 4.7.9.1 {@code ClassTypeSignature}s</a>,
+	 *              minus the surrounding {@code L} and semicolon.
 	 * @param transitive whether this widener should be applied across mod boundaries
 	 */
 	default void visitInjectedInterface(String owner, String iface, boolean transitive) {

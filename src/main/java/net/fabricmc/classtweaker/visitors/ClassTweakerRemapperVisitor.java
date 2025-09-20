@@ -74,6 +74,10 @@ public final class ClassTweakerRemapperVisitor implements ClassTweakerVisitor {
 
 	@Override
 	public void visitInjectedInterface(String owner, String iface, boolean transitive) {
-		delegate.visitInjectedInterface(remapper.map(owner), remapper.map(iface), transitive);
+		String mappedIfaceDesc = remapper.mapSignature("L" + iface + ";", false);
+		// strip the L and the semicolon back off the output from mapSignature
+		String mappedIface = mappedIfaceDesc.substring(1, mappedIfaceDesc.length() - 1);
+
+		delegate.visitInjectedInterface(remapper.map(owner), mappedIface, transitive);
 	}
 }

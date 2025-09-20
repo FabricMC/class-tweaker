@@ -16,6 +16,7 @@
 
 package net.fabricmc.classtweaker.api;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -64,9 +65,9 @@ public interface ClassTweaker extends ClassTweakerVisitor {
 
 	Map<String, AccessWidener> getAllAccessWideners();
 
-	Set<InjectedInterface> getInjectedInterfaces(String className);
+	List<InjectedInterface> getInjectedInterfaces(String className);
 
-	Map<String, Set<InjectedInterface>> getAllInjectedInterfaces();
+	Map<String, List<InjectedInterface>> getAllInjectedInterfaces();
 
 	ClassVisitor createClassVisitor(int api, @Nullable ClassVisitor classVisitor, @Nullable BiConsumer<String, byte[]> generatedClassConsumer);
 }

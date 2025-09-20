@@ -16,10 +16,11 @@
 
 package net.fabricmc.classtweaker.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -41,7 +42,7 @@ public final class ClassTweakerImpl implements ClassTweaker, ClassTweakerVisitor
 	// Contains the actual transforms. Class names are as class-file internal binary names (forward slash is used
 	// instead of period as the package separator).
 	final Map<String, AccessWidenerImpl> accessWideners = new HashMap<>();
-	final Map<String, Set<InjectedInterfaceImpl>> injectedInterfaces = new HashMap<>();
+	final Map<String, List<InjectedInterfaceImpl>> injectedInterfaces = new HashMap<>();
 	// Contains the class-names that are affected by loaded tweakers.
 	// Names are period-separated binary names (i.e. a.b.C).
 	final Set<String> targetClasses = new LinkedHashSet<>();
@@ -71,12 +72,8 @@ public final class ClassTweakerImpl implements ClassTweaker, ClassTweakerVisitor
 
 	@Override
 	public void visitInjectedInterface(String owner, String iface, boolean transitive) {
-		final Set<InjectedInterfaceImpl> injectedInterfaces = this.injectedInterfaces.computeIfAbsent(owner, s -> new HashSet<>());
+		final List<InjectedInterfaceImpl> injectedInterfaces = this.injectedInterfaces.computeIfAbsent(owner, s -> new ArrayList<>());
 		final InjectedInterfaceImpl injectedInterface = new InjectedInterfaceImpl(iface);
-
-		if (injectedInterfaces.contains(injectedInterface)) {
-			throw new RuntimeException(String.format("Duplicate interface injection (%s) for class (%s)", iface, owner));
-		}
 
 		injectedInterfaces.add(injectedInterface);
 		addTargets(owner);
@@ -135,12 +132,12 @@ public final class ClassTweakerImpl implements ClassTweaker, ClassTweakerVisitor
 	}
 
 	@Override
-	public Set<InjectedInterface> getInjectedInterfaces(String className) {
-		return Collections.unmodifiableSet(injectedInterfaces.getOrDefault(className, Collections.emptySet()));
+	public List<InjectedInterface> getInjectedInterfaces(String className) {
+		return Collections.unmodifiableList(injectedInterfaces.getOrDefault(className, Collections.emptyList()));
 	}
 
 	@Override
-	public Map<String, Set<InjectedInterface>> getAllInjectedInterfaces() {
+	public Map<String, List<InjectedInterface>> getAllInjectedInterfaces() {
 		//noinspection unchecked
 		return Collections.unmodifiableMap((Map) injectedInterfaces);
 	}
