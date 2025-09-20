@@ -3,8 +3,8 @@ plugins {
 	id "java-library"
 	id "maven-publish"
 	id "checkstyle"
-	id "com.diffplug.spotless" version "6.22.0"
-	id "me.modmuss50.remotesign" version "0.4.0"
+	id "com.diffplug.spotless" version "${spotlessVersion}"
+	id "me.modmuss50.remotesign" version "${remotesignVersion}"
 }
 
 import groovy.xml.XmlSlurper
@@ -38,15 +38,11 @@ repositories {
 }
 
 dependencies {
-	def asmVersion = "9.4"
-	def junitVersion = "5.9.2"
-	def assertJVersion = "3.22.0"
-
 	api "org.ow2.asm:asm:$asmVersion"
 	api "org.ow2.asm:asm-commons:$asmVersion" // For Remapper
-	api "net.fabricmc:tiny-remapper:0.8.6" // For validator
+	api "net.fabricmc:tiny-remapper:$tinyRemapperVersion" // For validator
 
-	compileOnly 'org.jetbrains:annotations:23.0.0'
+	compileOnly "org.jetbrains:annotations:$annotationsVersion"
 
 	testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
 	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
@@ -81,7 +77,7 @@ tasks.register('javadocJar', Jar) {
 
 checkstyle {
 	configFile = project.file("checkstyle.xml")
-	toolVersion = "9.3" // Last version to support java 8
+	toolVersion = checkstyleVersion
 }
 
 spotless {
