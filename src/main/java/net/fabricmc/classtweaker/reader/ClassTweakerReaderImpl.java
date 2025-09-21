@@ -85,6 +85,7 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 	public void read(BufferedReader reader, String currentNamespace, String id) throws IOException {
 		HeaderImpl header = readHeader(reader);
 		lineNumber = 1;
+		visitor.visitLineNumber(1);
 
 		int version = header.version;
 
@@ -100,6 +101,7 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 
 		while ((line = reader.readLine()) != null) {
 			lineNumber++;
+			visitor.visitLineNumber(lineNumber);
 
 			line = handleComment(version, line);
 

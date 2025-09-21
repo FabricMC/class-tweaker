@@ -19,6 +19,7 @@ package net.fabricmc.classtweaker.api.visitor;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.commons.Remapper;
 
+import net.fabricmc.classtweaker.api.ProblemSink;
 import net.fabricmc.classtweaker.validator.ClassTweakerValidatingVisitor;
 import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
 import net.fabricmc.classtweaker.visitors.ForwardingVisitor;
@@ -55,6 +56,12 @@ public interface ClassTweakerVisitor {
 	default void visitInjectedInterface(String owner, String iface, boolean transitive) {
 	}
 
+	/**
+	 * Called by the reader to indicate that we are now on the given line number. Useful for reporting errors.
+	 */
+	default void visitLineNumber(int lineNumber) {
+	}
+
 	static ClassTweakerVisitor remap(ClassTweakerVisitor delegate,
 			Remapper remapper,
 			String fromNamespace,
@@ -70,7 +77,7 @@ public interface ClassTweakerVisitor {
 		return new TransitiveOnlyFilter(delegate);
 	}
 
-	static ClassTweakerVisitor validate(TrEnvironment environment) {
-		return new ClassTweakerValidatingVisitor(environment);
+	static ClassTweakerVisitor validate(TrEnvironment environment, ProblemSink sink) {
+		return new ClassTweakerValidatingVisitor(environment, sink);
 	}
 }

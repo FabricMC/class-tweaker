@@ -16,6 +16,9 @@
 
 package net.fabricmc.classtweaker.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.NonExtendable
 public interface InjectedInterface {
 	/**
 	 * The class name of the interface to inject onto the target class.

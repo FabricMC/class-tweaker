@@ -59,6 +59,13 @@ public class ForwardingVisitor implements ClassTweakerVisitor {
 		}
 	}
 
+	@Override
+	public void visitLineNumber(int lineNumber) {
+		for (ClassTweakerVisitor visitor : visitors) {
+			visitor.visitLineNumber(lineNumber);
+		}
+	}
+
 	private static class ForwardingAccessWidenerVisitor implements AccessWidenerVisitor {
 		private final AccessWidenerVisitor[] visitors;
 

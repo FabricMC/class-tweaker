@@ -21,12 +21,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import net.fabricmc.classtweaker.impl.ClassTweakerImpl;
 
+@ApiStatus.NonExtendable
 public interface ClassTweaker extends ClassTweakerVisitor {
 	// Access widener format versions
 	int AW_V1 = 1;
