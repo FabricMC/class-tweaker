@@ -62,7 +62,7 @@ public class InterfaceInjectionClassVisitor extends ClassVisitor {
 			// If the class is not using generics but that an injected interface targeting the class is using them, we are creating the class signature
 
 			// See JVMS: https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassSignature
-			newSignature = new StringBuilder("L" + superName + ";");
+			newSignature = new StringBuilder("L").append(superName).append(";");
 
 			for (String baseInterface : interfaces) {
 				newSignature.append("L").append(baseInterface).append(";");

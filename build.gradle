@@ -70,7 +70,6 @@ javadoc {
 }
 
 tasks.register('javadocJar', Jar) {
-	dependsOn javadoc
 	from javadoc.destinationDir
 	archiveClassifier = 'javadoc'
 }
@@ -83,7 +82,7 @@ checkstyle {
 spotless {
 	java {
 		licenseHeaderFile file('HEADER')
-		importOrder('java', 'javax', '', 'net.minecraft', 'net.fabricmc')
+		importOrder('java', 'javax', '', 'net.fabricmc')
 	}
 }
 
