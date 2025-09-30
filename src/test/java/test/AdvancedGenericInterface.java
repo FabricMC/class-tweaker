@@ -16,7 +16,5 @@
 
 package test;
 
-public enum SimpleEnum {
-	ONE,
-	TWO;
+public interface AdvancedGenericInterface<T, U> {
 }

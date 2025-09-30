@@ -16,20 +16,5 @@
 
 package test;
 
-public enum ComplexEnum {
-	A("Hello") {
-		@Override
-		boolean hello(int b) {
-			System.out.println(b);
-			return true;
-		}
-	};
-
-	private final String hello;
-
-	ComplexEnum(String hello) {
-		this.hello = hello;
-	}
-
-	abstract boolean hello(int b);
+public class GenericClass<T> {
 }

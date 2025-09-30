@@ -16,11 +16,5 @@
 
 package test;
 
-public enum ParamEnum2 {
-	OLD(false, 'a', (byte) 0, (short) 0, 0,
-	0F, 0L, 1D, "Old", null);
-
-	ParamEnum2(boolean b, char c, byte by, short s, int i, float f, long l, double d,
-			String str, Object obj) {
-	}
+public interface GenericInterface2<T> {
 }

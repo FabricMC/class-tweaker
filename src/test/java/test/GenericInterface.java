@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-package net.fabricmc.classtweaker;
+package test;
 
-import java.util.Arrays;
-import java.util.List;
-
-@SuppressWarnings("unused")
-public class EnumTestConstants {
-	public static final List<Object> ENUM_PARAMS = Arrays.asList(
-			"z",
-			1000
-	);
-
-	public static boolean hello(int b) {
-		return b == 1;
-	}
+public interface GenericInterface<T> {
 }

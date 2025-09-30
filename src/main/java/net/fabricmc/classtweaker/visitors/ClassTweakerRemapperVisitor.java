@@ -21,7 +21,6 @@ import org.objectweb.asm.commons.Remapper;
 
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 /**
  * Decorates a {@link ClassTweakerVisitor} with a {@link Remapper}
@@ -74,18 +73,11 @@ public final class ClassTweakerRemapperVisitor implements ClassTweakerVisitor {
 	}
 
 	@Override
-	public EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		final EnumExtensionVisitor delegateEnumExtensionVisitor = delegate.visitEnum(remapper.map(owner), name, remapper.mapMethodDesc(constructorDesc), id, transitive);
-
-		if (delegateEnumExtensionVisitor == null) {
-			return null;
-		}
-
-		return new EnumExtensionRemapperVisitor(delegateEnumExtensionVisitor, remapper, owner);
-	}
-
-	@Override
 	public void visitInjectedInterface(String owner, String iface, boolean transitive) {
-		delegate.visitInjectedInterface(remapper.map(owner), remapper.map(iface), transitive);
+		String mappedIfaceDesc = remapper.mapSignature("L" + iface + ";", false);
+		// strip the L and the semicolon back off the output from mapSignature
+		String mappedIface = mappedIfaceDesc.substring(1, mappedIfaceDesc.length() - 1);
+
+		delegate.visitInjectedInterface(remapper.map(owner), mappedIface, transitive);
 	}
 }

@@ -16,9 +16,24 @@
 
 package net.fabricmc.classtweaker.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.NonExtendable
 public interface InjectedInterface {
 	/**
 	 * The class name of the interface to inject onto the target class.
 	 */
 	String getInterfaceName();
+
+	/**
+	 * The signature of the interface to inject, including any generics. If no generics are present, this will be
+	 * {@code "L" + interfaceName + ";"}. See the
+	 * <a href="https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassTypeSignature">JVMS</a>.
+	 */
+	String getInterfaceSignature();
+
+	/**
+	 * Whether the interface to inject has any generics.
+	 */
+	boolean hasGenerics();
 }

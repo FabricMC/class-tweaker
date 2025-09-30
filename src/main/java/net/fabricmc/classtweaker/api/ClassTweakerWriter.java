@@ -16,9 +16,12 @@
 
 package net.fabricmc.classtweaker.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import net.fabricmc.classtweaker.writer.ClassTweakerWriterImpl;
 
+@ApiStatus.NonExtendable
 public interface ClassTweakerWriter extends ClassTweakerVisitor {
 	static ClassTweakerWriter create(int version) {
 		return new ClassTweakerWriterImpl(version);

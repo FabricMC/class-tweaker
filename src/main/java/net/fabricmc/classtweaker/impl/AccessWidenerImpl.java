@@ -28,9 +28,9 @@ import java.util.Map;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.objectweb.asm.Opcodes;
 
-import net.fabricmc.classtweaker.utils.EntryTriple;
 import net.fabricmc.classtweaker.api.AccessWidener;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
+import net.fabricmc.classtweaker.utils.EntryTriple;
 
 public final class AccessWidenerImpl implements AccessWidener, AccessWidenerVisitor {
 	private final String owner;

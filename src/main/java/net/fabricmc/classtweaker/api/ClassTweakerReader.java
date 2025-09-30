@@ -19,9 +19,12 @@ package net.fabricmc.classtweaker.api;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import net.fabricmc.classtweaker.reader.ClassTweakerReaderImpl;
 
+@ApiStatus.NonExtendable
 public interface ClassTweakerReader {
 	static ClassTweakerReader create(ClassTweakerVisitor visitor) {
 		return new ClassTweakerReaderImpl(visitor);

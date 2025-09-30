@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-package test;
+package net.fabricmc.classtweaker.api;
 
-public enum ParamEnum {
-	A("a", 100),
-	B("b", 200),
-	C("c", 300),
-	D("d", 400),
-	E("e", 500),
-	F("f", 600),
-	G("g", 700);
-
-	final String letter;
-	final int number;
-
-	ParamEnum(String letter, int number) {
-		this.letter = letter;
-		this.number = number;
-	}
+@FunctionalInterface
+public interface ProblemSink {
+	void addProblem(int lineNumber, String message);
 }

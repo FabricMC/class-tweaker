@@ -18,8 +18,11 @@ package net.fabricmc.classtweaker.api;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.fabricmc.classtweaker.utils.EntryTriple;
 
+@ApiStatus.NonExtendable
 public interface AccessWidener {
 	Access getClassAccess();
 
@@ -31,6 +34,7 @@ public interface AccessWidener {
 
 	Map<EntryTriple, Access> getAllFieldAccesses();
 
+	@ApiStatus.NonExtendable
 	interface Access {
 		boolean isAccessible();
 		boolean isExtendable();

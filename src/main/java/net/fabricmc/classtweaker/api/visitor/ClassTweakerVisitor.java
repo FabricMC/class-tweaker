@@ -19,6 +19,7 @@ package net.fabricmc.classtweaker.api.visitor;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.commons.Remapper;
 
+import net.fabricmc.classtweaker.api.ProblemSink;
 import net.fabricmc.classtweaker.validator.ClassTweakerValidatingVisitor;
 import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
 import net.fabricmc.classtweaker.visitors.ForwardingVisitor;
@@ -43,27 +44,22 @@ public interface ClassTweakerVisitor {
 	}
 
 	/**
-	 * Visit an extended enum.
-	 *
-	 * @param owner the name of the containing enum class
-	 * @param name the name of the enum value
-	 * @param constructorDesc The enum constructor desc
-	 * @param id A unique id
-	 * @param transitive whether this widener should be applied across mod boundaries
-	 */
-	@Nullable
-	default EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		return null;
-	}
-
-	/**
 	 * Visit an injected interface.
 	 *
 	 * @param owner the class name of the class to inject the interface onto
-	 * @param iface the class name of the interface to inject onto the target class.
+	 * @param iface the class name of the interface to inject onto the target class, plus any generics. If generics are
+	 *              present, then this follows the format of
+	 *              <a href="https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-ClassTypeSignature">JVMS 4.7.9.1 {@code ClassTypeSignature}s</a>,
+	 *              minus the surrounding {@code L} and semicolon.
 	 * @param transitive whether this widener should be applied across mod boundaries
 	 */
 	default void visitInjectedInterface(String owner, String iface, boolean transitive) {
+	}
+
+	/**
+	 * Called by the reader to indicate that we are now on the given line number. Useful for reporting errors.
+	 */
+	default void visitLineNumber(int lineNumber) {
 	}
 
 	static ClassTweakerVisitor remap(ClassTweakerVisitor delegate,
@@ -81,7 +77,7 @@ public interface ClassTweakerVisitor {
 		return new TransitiveOnlyFilter(delegate);
 	}
 
-	static ClassTweakerVisitor validate(TrEnvironment environment) {
-		return new ClassTweakerValidatingVisitor(environment);
+	static ClassTweakerVisitor validate(TrEnvironment environment, ProblemSink sink) {
+		return new ClassTweakerValidatingVisitor(environment, sink);
 	}
 }

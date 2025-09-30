@@ -33,7 +33,6 @@ import net.fabricmc.classtweaker.api.ClassTweaker;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
 
 class ClassTweakerWriterTest {
 	@Test
@@ -103,8 +102,8 @@ class ClassTweakerWriterTest {
 	void testRejectsWritingV3FeaturesInV2Version() {
 		ClassTweakerWriter writer = ClassTweakerWriter.create(ClassTweaker.AW_V2);
 		writer.visitHeader("ns1");
-		Exception e = assertThrows(Exception.class, () -> writer.visitEnum("test/ParamEnum", "Z", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", false));
-		assertThat(e).hasMessageContaining("Cannot write enum extension rule in version 2");
+		Exception e = assertThrows(Exception.class, () -> writer.visitInjectedInterface("test/FinalClass", "test/InterfaceTests", false));
+		assertThat(e).hasMessageContaining("Cannot write interface injection rule in version 2");
 	}
 
 	private String readReferenceContent(String name) throws IOException, URISyntaxException {
@@ -139,18 +138,6 @@ class ClassTweakerWriterTest {
 		}
 
 		if (version >= 3) {
-			visitor.visitEnum("test/SimpleEnum", "THREE", "(Ljava/lang/String;I)V", "test", false);
-
-			EnumExtensionVisitor enumExtensionVisitor = visitor.visitEnum("test/ParamEnum", "Z", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", false);
-			enumExtensionVisitor.visitParameterList("net/fabricmc/classtweaker/EnumTestConstants", "ENUM_PARAMS", "Ljava/util/List;");
-
-			enumExtensionVisitor = visitor.visitEnum("test/ParamEnum", "X", "(Ljava/lang/String;ILjava/lang/String;I)V", "test", true);
-			enumExtensionVisitor.visitParameterConstants(new Object[]{"z", 1000});
-
-			enumExtensionVisitor = visitor.visitEnum("test/ComplexEnum", "ADDED", "(Ljava/lang/String;ILjava/lang/String;)V", "test", false);
-			enumExtensionVisitor.visitOverride("hello", "net/fabricmc/classtweaker/EnumTestConstants", "hello", "(I)Z");
-			enumExtensionVisitor.visitParameterConstants(new Object[]{"Hello world!"});
-
 			visitor.visitInjectedInterface("test/FinalClass", "test/InterfaceTests", false);
 			visitor.visitInjectedInterface("test/FinalClass", "test/InterfaceTests", true);
 		}

@@ -21,21 +21,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.objectweb.asm.Type;
 
 import net.fabricmc.classtweaker.api.ClassTweaker;
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
-import net.fabricmc.classtweaker.utils.ConstantParser;
 
 public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 	public static final Charset ENCODING = StandardCharsets.UTF_8;
@@ -91,6 +85,7 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 	public void read(BufferedReader reader, String currentNamespace, String id) throws IOException {
 		HeaderImpl header = readHeader(reader);
 		lineNumber = 1;
+		visitor.visitLineNumber(1);
 
 		int version = header.version;
 
@@ -104,11 +99,9 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 
 		Pattern delimiter = version < ClassTweaker.AW_V2 ? V1_DELIMITER : V2_DELIMITER;
 
-		EnumExtensionVisitor enumExtensionVisitor = null;
-		Type enumConstructor = null;
-
 		while ((line = reader.readLine()) != null) {
 			lineNumber++;
+			visitor.visitLineNumber(lineNumber);
 
 			line = handleComment(version, line);
 
@@ -117,27 +110,7 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 			}
 
 			if (Character.isWhitespace(line.codePointAt(0))) {
-				if (enumExtensionVisitor != null) {
-					final String trimmed = line.trim();
-
-					if (trimmed.startsWith("params")) {
-						readEnumParams(trimmed, enumExtensionVisitor, enumConstructor);
-					} else if (trimmed.startsWith("override")) {
-						readEnumOverrides(trimmed, enumExtensionVisitor);
-					} else {
-						throw error("Expect params or override", line);
-					}
-
-					continue;
-				}
-
 				throw error("Leading whitespace is not allowed");
-			}
-
-			if (enumExtensionVisitor != null) {
-				// No longer within an enum
-				enumExtensionVisitor.visitEnd();
-				enumExtensionVisitor = null;
 			}
 
 			// Note that this trims trailing spaces. See the docs of split for details.
@@ -146,29 +119,7 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 			String firstToken = tokens.get(0);
 
 			if (version >= ClassTweaker.CT_V1) {
-				if (("extend-enum".equals(firstToken) || (TRANSITIVE_PREFIX + "extend-enum").equals(firstToken))) {
-					if (tokens.size() != 4) {
-						throw error("Expected (extend-enum <className> <name> <desc>) got (%s)", line);
-					}
-
-					try {
-						enumConstructor = Type.getType(tokens.get(3));
-					} catch (IllegalArgumentException e) {
-						throw error(e.getMessage());
-					}
-
-					if (enumConstructor.getArgumentTypes().length < 2) {
-						throw error("Invalid enum constructor desc got (%s)", tokens.get(3));
-					}
-
-					if (!enumConstructor.getArgumentTypes()[0].getInternalName().equals("java/lang/String")
-							|| !enumConstructor.getArgumentTypes()[1].getInternalName().equals("I")) {
-						throw error("Invalid enum constructor desc got (%s)", tokens.get(3));
-					}
-
-					enumExtensionVisitor = visitor.visitEnum(tokens.get(1), tokens.get(2), tokens.get(3), id, tokens.get(0).startsWith(TRANSITIVE_PREFIX));
-					continue;
-				} else if (("inject-interface".equals(firstToken) || (TRANSITIVE_PREFIX + "inject-interface").equals(firstToken))) {
+				if (("inject-interface".equals(firstToken) || (TRANSITIVE_PREFIX + "inject-interface").equals(firstToken))) {
 					if (tokens.size() != 3) {
 						throw error("Expected (inject-interface <className> <interfaceName>) got (%s)", line);
 					}
@@ -331,59 +282,6 @@ public final class ClassTweakerReaderImpl implements ClassTweakerReader {
 		}
 
 		return line;
-	}
-
-	// List params start with an un quoted class name, that isn't a keyword (true/false/null)
-	// Constant params start with anything else, strings are quoted
-	private void readEnumParams(String line, EnumExtensionVisitor visitor, Type constructorType) {
-		final List<String> tokens = new ArrayList<>();
-
-		final Matcher matcher = ENUM_PARAMS_STR_PATTERN.matcher(line);
-
-		while (matcher.find()) {
-			tokens.add(matcher.group());
-		}
-
-		if (tokens.size() < 2 || !"params".equals(tokens.get(0))) {
-			throw error(ENUM_PARAMS_USAGE, line);
-		}
-
-		// Remove "params", no need for it anymore
-		tokens.remove(0);
-
-		if (!ConstantParser.isConstant(tokens.get(0))) {
-			// First token is not a valid constant, so we assume it's loading the params from a list
-			if (tokens.size() != 3) {
-				throw error(ENUM_PARAMS_USAGE, line);
-			}
-
-			visitor.visitParameterList(tokens.get(0), tokens.get(1), tokens.get(2));
-			return;
-		}
-
-		final List<Object> constants;
-
-		try {
-			// Skip the first 2 enum types (name and index)
-			final Type[] constructorTypes = constructorType.getArgumentTypes();
-			final Type[] requiredTypes = Arrays.copyOfRange(constructorTypes, 2, constructorTypes.length);
-
-			constants = ConstantParser.parseConstants(requiredTypes, tokens);
-		} catch (ConstantParser.ConstantParseException e) {
-			throw error("Failed to parse constants (%s) on line (%s)", e.getMessage(), line);
-		}
-
-		visitor.visitParameterConstants(constants.toArray());
-	}
-
-	private void readEnumOverrides(String line, EnumExtensionVisitor enumExtensionVisitor) {
-		List<String> tokens = Arrays.asList(V2_DELIMITER.split(line));
-
-		if (tokens.size() != 5) {
-			throw error("Expected (override <targetMethodName> <owner> <name> <desc>) got (%s)", line);
-		}
-
-		enumExtensionVisitor.visitOverride(tokens.get(1), tokens.get(2), tokens.get(3), tokens.get(4));
 	}
 
 	private AccessWidenerVisitor.AccessType readAccessType(String access) {

@@ -18,46 +18,35 @@ package net.fabricmc.classtweaker.validator;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.fabricmc.classtweaker.api.ProblemSink;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
-import net.fabricmc.classtweaker.api.visitor.EnumExtensionVisitor;
-import net.fabricmc.tinyremapper.api.TrClass;
 import net.fabricmc.tinyremapper.api.TrEnvironment;
-import net.fabricmc.tinyremapper.api.TrMethod;
 
 public class ClassTweakerValidatingVisitor implements ClassTweakerVisitor {
 	private final TrEnvironment environment;
+	private final ProblemSink sink;
+	private int lineNumber;
 
-	public ClassTweakerValidatingVisitor(TrEnvironment environment) {
+	public ClassTweakerValidatingVisitor(TrEnvironment environment, ProblemSink sink) {
 		this.environment = environment;
+		this.sink = sink;
 	}
 
 	@Override
 	public @Nullable AccessWidenerVisitor visitAccessWidener(String owner) {
-		return new AccessWidenerValidatingVisitor(environment, owner);
-	}
-
-	@Override
-	public @Nullable EnumExtensionVisitor visitEnum(String owner, String name, String constructorDesc, String id, boolean transitive) {
-		final TrClass trClass = environment.getClass(owner);
-
-		if (trClass == null) {
-			throw new ClassTweakerValidationException("Could not find target class (%s)", owner);
-		}
-
-		final TrMethod trConstructor = trClass.getMethod("<init>", constructorDesc);
-
-		if (trConstructor == null) {
-			throw new ClassTweakerValidationException("Could not find target constructor (<init>%s) in class (%s)", constructorDesc, owner);
-		}
-
-		return new EnumExtensionValidatingVisitor(environment, owner, name, constructorDesc);
+		return new AccessWidenerValidatingVisitor(environment, sink, owner, lineNumber);
 	}
 
 	@Override
 	public void visitInjectedInterface(String owner, String iface, boolean transitive) {
 		if (environment.getClass(owner) == null) {
-			throw new ClassTweakerValidationException("Could not find target class (%s)", owner);
+			sink.addProblem(lineNumber, String.format("Could not find target class (%s)", owner));
 		}
+	}
+
+	@Override
+	public void visitLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
 	}
 }

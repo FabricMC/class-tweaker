@@ -16,16 +16,19 @@
 
 package net.fabricmc.classtweaker.api;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import net.fabricmc.classtweaker.impl.ClassTweakerImpl;
 
+@ApiStatus.NonExtendable
 public interface ClassTweaker extends ClassTweakerVisitor {
 	// Access widener format versions
 	int AW_V1 = 1;
@@ -64,13 +67,9 @@ public interface ClassTweaker extends ClassTweakerVisitor {
 
 	Map<String, AccessWidener> getAllAccessWideners();
 
-	Map<String, EnumExtension> getEnumExtensions(String className);
+	List<InjectedInterface> getInjectedInterfaces(String className);
 
-	Map<String, Map<String, EnumExtension>> getAllEnumExtensions();
-
-	Set<InjectedInterface> getInjectedInterfaces(String className);
-
-	Map<String, Set<InjectedInterface>> getAllInjectedInterfaces();
+	Map<String, List<InjectedInterface>> getAllInjectedInterfaces();
 
 	ClassVisitor createClassVisitor(int api, @Nullable ClassVisitor classVisitor, @Nullable BiConsumer<String, byte[]> generatedClassConsumer);
 }
